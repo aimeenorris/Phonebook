@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import People from "./components/Person";
-import Filter from "./components/Filter";
+import React, { useState } from "react";
+import Person from "./components/Person";
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "111-222-3333", id: 1 },
+  ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filterCriteria, setFilterCriteria] = useState("");
-
-  const hook = () => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
-    });
-  };
-
-  useEffect(hook, []);
-  console.log("render", persons.length, "persons");
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -38,13 +26,6 @@ const App = () => {
     console.log(persons);
   };
 
-  const peopleToShow =
-    filterCriteria === ""
-      ? persons
-      : persons.filter((person) =>
-          person.name.toLowerCase().includes(filterCriteria.toLowerCase())
-        );
-
   const handleNameChange = (event) => {
     console.log(event.target.value);
     setNewName(event.target.value);
@@ -57,18 +38,9 @@ const App = () => {
     console.log(`new number: ${newNumber}`);
   };
 
-  const handleFilterChange = (event) => {
-    console.log(event.target.value);
-    setFilterCriteria(event.target.value);
-  };
-
   return (
     <div>
       <h2> Phonebook </h2>
-      <Filter
-        filterCriteria={filterCriteria}
-        handleFilterChange={handleFilterChange}
-      />
       <form onSubmit={addPerson}>
         <div>
           <p>
@@ -84,7 +56,9 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        <People peopleToShow={peopleToShow} />
+        {persons.map((person) => (
+          <Person key={person.id} person={person} />
+        ))}
       </ul>
     </div>
   );
