@@ -41,6 +41,14 @@ const App = () => {
     console.log(persons);
   };
 
+  const deletePerson = (id) => {
+    console.log("button clicked");
+    phonebookService.remove(id).then((request) => {
+      console.log("deleted person");
+    });
+    setPersons(persons.filter((n) => n.id !== id));
+  };
+
   const peopleToShow =
     filterCriteria === ""
       ? persons
@@ -87,7 +95,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        <People peopleToShow={peopleToShow} />
+        <People peopleToShow={peopleToShow} onDelete={deletePerson} />
       </ul>
     </div>
   );
