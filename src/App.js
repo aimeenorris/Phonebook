@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import People from "./components/Person";
 import Filter from "./components/Filter";
+import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,9 +11,9 @@ const App = () => {
 
   const hook = () => {
     console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
+    phonebookService.getAll().then((persons) => {
       console.log("promise fulfilled");
-      setPersons(response.data);
+      setPersons(persons);
     });
   };
 
@@ -31,9 +31,12 @@ const App = () => {
         number: newNumber,
         id: persons.length + 1,
       };
-      setPersons(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      phonebookService.create(personObject).then((person) => {
+        console.log("added person");
+        setPersons(persons.concat(personObject));
+        setNewName("");
+        setNewNumber("");
+      });
     }
     console.log(persons);
   };
