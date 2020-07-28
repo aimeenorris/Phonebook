@@ -41,12 +41,17 @@ const App = () => {
     console.log(persons);
   };
 
-  const deletePerson = (id) => {
-    console.log("button clicked");
-    phonebookService.remove(id).then((request) => {
-      console.log("deleted person");
-    });
-    setPersons(persons.filter((n) => n.id !== id));
+  const deletePerson = (id, name) => {
+    console.log(persons);
+    console.log(`button clicked for ${name}`);
+    if (window.confirm(`Delete ${name} ?`) === true) {
+      phonebookService.remove(id).then((request) => {
+        console.log("deleted person");
+        setPersons(persons.filter((n) => n.id !== id));
+      });
+    } else {
+      console.log("Delete canceled");
+    }
   };
 
   const peopleToShow =
@@ -80,6 +85,7 @@ const App = () => {
         filterCriteria={filterCriteria}
         handleFilterChange={handleFilterChange}
       />
+      <h2> Add a New Number</h2>
       <form onSubmit={addPerson}>
         <div>
           <p>
@@ -90,7 +96,7 @@ const App = () => {
           </p>
         </div>
         <div>
-          <button type="submit">add</button>
+          <button type="submit">Add</button>
         </div>
       </form>
       <h2>Numbers</h2>
