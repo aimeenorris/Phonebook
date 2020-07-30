@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import People from "./components/Person";
 import Filter from "./components/Filter";
+import { ErrorNotification, InfoNotification } from "./components/Notification";
 import phonebookService from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [infoMessage, setInfoMessage] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState("");
 
   const hook = () => {
@@ -41,8 +44,22 @@ const App = () => {
                 person.name !== newName ? person : returnedPerson
               )
             );
+            setInfoMessage(`Changed ${returnedPerson.name}'s number`);
+            setTimeout(() => {
+              setInfoMessage(null);
+            }, 5000);
             setNewName("");
             setNewNumber("");
+          })
+          .catch((error) => {
+            setErrorMessage(
+              `Information of ${changedPerson.name}' has already been removed from the server`
+            );
+            setNewName("");
+            setNewNumber("");
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
           });
       } else {
         setNewName("");
@@ -54,12 +71,26 @@ const App = () => {
         number: newNumber,
         id: persons.length + 1,
       };
-      phonebookService.create(personObject).then((person) => {
-        console.log("added person");
-        setPersons(persons.concat(personObject));
-        setNewName("");
-        setNewNumber("");
-      });
+      phonebookService
+        .create(personObject)
+        .then((person) => {
+          console.log("added person");
+          setPersons(persons.concat(personObject));
+          setInfoMessage(`Added ${personObject.name}`);
+          setTimeout(() => {
+            setInfoMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          setErrorMessage(`Error creating ${personObject.name}`);
+          setNewName("");
+          setNewNumber("");
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
     console.log(persons);
   };
@@ -68,10 +99,24 @@ const App = () => {
     console.log(persons);
     console.log(`button clicked for ${name}`);
     if (window.confirm(`Delete ${name} ?`) === true) {
-      phonebookService.remove(id).then((request) => {
-        console.log("deleted person");
-        setPersons(persons.filter((n) => n.id !== id));
-      });
+      phonebookService
+        .remove(id)
+        .then((request) => {
+          console.log("deleted person");
+          setPersons(persons.filter((n) => n.id !== id));
+          setInfoMessage(`Deleted ${name}`);
+          setTimeout(() => {
+            setInfoMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(`Error deleting`);
+          setNewName("");
+          setNewNumber("");
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     } else {
       console.log("Delete canceled");
     }
@@ -104,6 +149,8 @@ const App = () => {
   return (
     <div>
       <h2> Phonebook </h2>
+      <ErrorNotification message={errorMessage} />
+      <InfoNotification message={infoMessage} />
       <Filter
         filterCriteria={filterCriteria}
         handleFilterChange={handleFilterChange}

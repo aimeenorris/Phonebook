@@ -1,8 +1,8 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
+      "name": "Aimee Norris",
+      "number": "919-123-4567",
       "id": 1
     },
     {
@@ -14,11 +14,6 @@
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": 3
-    },
-    {
-      "name": "aimee norris",
-      "number": "919-247-4237",
-      "id": 4
     }
   ]
 }
